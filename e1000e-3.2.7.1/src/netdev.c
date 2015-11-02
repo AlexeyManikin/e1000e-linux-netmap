@@ -1455,6 +1455,13 @@ static bool e1000_clean_rx_irq_ps(struct e1000_ring *rx_ring)
 	bool cleaned = false;
 	unsigned int total_rx_bytes = 0, total_rx_packets = 0;
 
+// Added by Pavel Odintsov, not exists in original patch
+// https://github.com/luigirizzo/netmap/issues/70
+#ifdef DEV_NETMAP
+        if (netmap_rx_irq(netdev, 0, work_done))
+            return 1; /* seems to be ignored */
+#endif /* DEV_NETMAP */
+
 	i = rx_ring->next_to_clean;
 	rx_desc = E1000_RX_DESC_PS(*rx_ring, i);
 	staterr = le32_to_cpu(rx_desc->wb.middle.status_error);
